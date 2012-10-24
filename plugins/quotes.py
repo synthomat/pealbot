@@ -1,11 +1,12 @@
 from random import shuffle
+from plugin import Plugin
 
 class Quotes(Plugin):
-	def __init__(self, file_name):
-		self.file_name = file_name
+	def __init__(self):
+		self.file_name = "quotes.txt"
 		self.quotes = []
 		try:
-			self.quotes = open(file_name, 'r+').readlines()
+			self.quotes = open(self.file_name, 'r+').readlines()
 		except:
 			pass
 	

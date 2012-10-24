@@ -1,50 +1,37 @@
 #!/usr/bin/env python
-
-from pybot import BotBot
-
+import os.path
+from lib.pybot import BotBot
+from lib.plugindispatcher import PluginDispatcher
 
 class PealBot(BotBot):
 	def __init__(self, config):
 		BotBot.__init__(self, config)
+		
+		self.plugin_dispatcher = None
+		self.init_plugins()
+
+	def init_plugins(self):
+		script_dir = os.path.dirname(__file__)
+		plugin_dir = os.path.join(script_dir, self.config['plugindir'])
+
+		self.plugin_dispatcher = PluginDispatcher(self, plugin_dir)
+		self.plugin_dispatcher.load_plugins(self.config['autoload'])
 
 	def on_privmsg(self, params):
 		text = params['text']
 
-		if text.startswith('!'):
-			self.handle_cmd(params)
-
-
-	def handle_cmd(self, params):
-		parts = params['text'].split()
-		cmd = parts.pop(0)[1:]
-
-		parts = ' '.join(parts)
-
-		if cmd == "kill":
-			self.quit()
-
-		if cmd == "join" and parts:
-			self.join(parts)
-
-		if cmd == "part" and parts:
-			self.part(parts)
-
-	def on_cmd_kill(self, params):
-		self.quit()
-
-	def on_cmd_join(self, params):
-		self.join()
-
-	def on_cmd_part(self, params):
-		self.part()
-
+	def invoke_hook(self, method, msg_parts):
+		BotBot.invoke_hook(self, method, msg_parts)
+		self.plugin_dispatcher.invoke_hook(method, msg_parts)
 
 if __name__ == '__main__':
 	config = {
 		"server": ("irc.freenode.org", 6667),
 		"autojoin": '#bsxlab',
+		"plugindir": "plugins",
 		"autoload": [
-			'quotes.Quotes'
+			#'quotes.Quotes',
+			'basic.Basic'
 		],
 
 		"nick": "tastybot",
