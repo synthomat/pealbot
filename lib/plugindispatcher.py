@@ -32,7 +32,7 @@ class PluginDispatcher(object):
 	def invoke_hook(self, method, msg_parts):
 		for plugin in self.plugins:
 			if method in dir(plugin):
-				print "%s found in %s" % (method, self.plugins)
+				print "-- %s found in %s" % (method, plugin)
 				hook = getattr(plugin, method)
 				ret = hook(msg_parts)
 

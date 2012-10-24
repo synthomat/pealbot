@@ -30,8 +30,8 @@ if __name__ == '__main__':
 		"autojoin": '#bsxlab',
 		"plugindir": "plugins",
 		"autoload": [
-			#'quotes.Quotes',
-			'basic.Basic'
+			'basic.Basic',
+			'quotes.Quotes',
 		],
 
 		"nick": "tastybot",

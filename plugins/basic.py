@@ -1,7 +1,6 @@
 from plugin import Plugin
 
 class Basic(Plugin):
-
 	def __init__(self):
 		Plugin.__init__(self)
 

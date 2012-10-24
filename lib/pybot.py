@@ -77,7 +77,7 @@ class BotBot(object):
 					continue
 
 				# local echo
-				print line
+				# print line
 
 				# handle irc commands
 				self.handle_irc(line)
