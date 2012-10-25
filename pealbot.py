@@ -36,7 +36,7 @@ if __name__ == '__main__':
 
 		"nick": "jxBot",
 		"realname": "Cool Bot",
-		"password": "jxBotPass"
+		"password": "XXXXXXX"
 	}
 
 	pb = PealBot(config)
