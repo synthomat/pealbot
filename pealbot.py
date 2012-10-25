@@ -34,8 +34,9 @@ if __name__ == '__main__':
 			'quotes.Quotes',
 		],
 
-		"nick": "tastybot",
-		"realname": "Cool Bot"
+		"nick": "jxBot",
+		"realname": "Cool Bot",
+		"password": "jxBotPass"
 	}
 
 	pb = PealBot(config)

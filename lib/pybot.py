@@ -33,6 +33,9 @@ class BotBot(object):
 		self.send('QUIT %s' % quit_msg)
 		self.disconnect()
 
+	def auth(self, password):
+		self.send('PRIVMSG nickserv identify %s' % password)
+
 	def join(self, channels):
 		self.send('JOIN %s' % channels)
 
@@ -63,6 +66,9 @@ class BotBot(object):
 
 		# set default user and real name
 		self.send("USER %s 0 0 :%s" % (self.config['nick'], self.config['realname']))
+		
+		# Authenticate at Nickserv:
+		self.auth(self.config['password'])
 
 		while True:
 			recv = self.sock.recv(2048)
