@@ -302,7 +302,8 @@ class BotBot(object):
 
 		while True:
 			try:
-				recv = self.sock.recv(1024)
+				recv = self.sock.recv(128)
+				print recv
 			except:
 				self.exit(0)
 
