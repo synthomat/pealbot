@@ -26,7 +26,6 @@ class PealBot(BotBot):
 	"""
 	:author: Anton Zering <synth@lostprofile.de>
 	:author: Jules Held <nemesis@creative-heads.org>
-
 	:copyright: 2012, Anton Zering
 	:license: Apache License, Version 2.0
 	"""
@@ -48,18 +47,24 @@ class PealBot(BotBot):
 		self.plugin_dispatcher.handle_irc(msg)
 
 	def exit(self, exit_code=0):
+		"""Invokes the before_unload hook of all loaded plugins before the module gets unloaded."""
 		# invoke system hook
 		self.plugin_dispatcher.invoke_all("before_unload")
 		BotBot.exit(self, exit_code)
 
 	def quit(self, quit_msg=''):
+		"""Invokes the before_quit hook of all loaded plugins before the QUIT message is sent to the server."""
 		# invoke system hook
 		self.plugin_dispatcher.invoke_all("before_quit")
 		BotBot.quit(self, quit_msg)
 
 
 if __name__ == '__main__':
-	import config
+	try:
+		import config
+	except:
+		print "Configuration could not be found."
+		sys.exit(1)
 
 	pb = PealBot(config)
 	pb.start()

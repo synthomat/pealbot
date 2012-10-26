@@ -19,6 +19,15 @@ limitations under the License.
 from plugin import Plugin
 
 class Basic(Plugin):
+	"""
+	Essential plugin for the bot.
+	It handles commands and autojoins.
+
+	:author: Anton Zering <synth@lostprofile.de>
+	:copyright: 2012, Anton Zering
+	:license: Apache License, Version 2.0
+	"""
+
 	def __init__(self, context):
 		Plugin.__init__(self, context)
 
@@ -29,6 +38,7 @@ class Basic(Plugin):
 			self.context.quit()
 
 	def on_rpl_endofmotd(self, params):
+		"""RPL_ENDOFMOTD is used to auto join channels."""
 		# autojoin channels
 		for chan in self.context.config.AUTOJOIN:
 			self.context.join(chan)

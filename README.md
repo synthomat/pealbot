@@ -9,6 +9,8 @@ At the moment it supports:
 - kill itself
 - apply password-protected username
 
+API Documentation can be found at http://synthomat.de/pealbot/docs/
+
 
 ## License
 Copyright (c) 2012 Anton Zering <<synth@lostprofile.de>>

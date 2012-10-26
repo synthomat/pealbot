@@ -155,7 +155,6 @@ class BotBot(object):
 	"""
 	:author: Anton Zering <synth@lostprofile.de>
 	:author: Jules Held <nemesis@creative-heads.org>
-
 	:copyright: 2012, Anton Zering
 	:license: Apache License, Version 2.0
 	"""
@@ -243,7 +242,7 @@ class BotBot(object):
 		Sends the PART message to the searver to leave one or multiple channels
 
 		:param channels: One or more channels separated by whitespaces.
-		:param quit_message: Part message to appear in the channel
+		:param part_msg: Part message to appear in the channel
 		"""
 
 		return self.send('PART %s :%s' % (channels, part_msg))
@@ -271,7 +270,7 @@ class BotBot(object):
 		"""
 		Sends a PRIVMSG message to a channel or another client
 
-		:param targer: Reciever of the message. Channel or a nick name.
+		:param target: Reciever of the message. Channel or a nick name.
 		:param msg: Message to be sent
 		"""
 		return self.send("PRIVMSG %s :%s" % (target, msg))
@@ -323,4 +322,4 @@ class BotBot(object):
 		method = lookup_hook(self, msg.get('cmd'), codes)
 
 		if method:
-			method(msg)
+			return method(msg)
