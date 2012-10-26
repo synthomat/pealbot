@@ -1,6 +1,7 @@
+# coding: utf-8
 """
 Copyright 2012
-	Anton Zering <synth@lostprofile.de>
+   Anton Zering <synth@lostprofile.de>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -21,9 +22,8 @@ class Plugin(object):
 	# prevents the execution of the next's plugin hook
 	LAST = 1
 
-	def __init__(self):
-		self.config = None
-		# self.c = None
-
-		self.d = Debug("[M] " + self.__class__.__name__)
+	def __init__(self, context):
+		self.d = Debug("[Mod] " + self.__class__.__name__)
+		
+		self.context = context
 		self.d.info("loaded...")

@@ -1,8 +1,8 @@
 # coding: utf-8
 """
 Copyright 2012
-	Anton Zering <synth@lostprofile.de>
-	Jules Held <nemesis@creative-heads.org>
+   Anton Zering <synth@lostprofile.de>
+   Jules Held <nemesis@creative-heads.org>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,7 +20,8 @@ limitations under the License.
 import re
 import socket
 import sys
-from termcolor import cprint
+
+from tools import Debug, IRCParser
 
 codes = {
 	##
@@ -150,44 +151,84 @@ codes = {
 	259: 'rpl_adminemail',		# :<admin info>
 }
 
-from tools import Debug
-from parser import IRCParser
 
 class BotBot(object):
-	def __init__(self, host, nick_name, real_name=None):
-		self.d = Debug()
-		self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	"""
+	:author: Anton Zering <synth@lostprofile.de>
+	:author: Jules Held <nemesis@creative-heads.org>
 
+	:copyright: 2012, Anton Zering
+	:license: Apache License, Version 2.0
+	"""
+
+	def __init__(self, host, nick_name, real_name=None):
+		""" 
+		Constructor for the bot
+
+		:param host: The server address as tuple of (HOST, PORT)
+		:param nick_name: Nickname for the bot.
+		:param real_name: Real name of the bot. It not provided, the nick is taken as real name.
+		"""
+
+		self.d = Debug()
+		
 		self.host = host
 		self.nick_name = nick_name
 		
-		if real_name: self.real_name = real_name
-		else: self.real_name = nick_name
+		if real_name:
+			self.real_name = real_name
+		else:
+			self.real_name = nick_name
 
-		self.buffer = None
+		self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
 		self.parser = IRCParser()
 
 	def connect(self, host=None):
+		"""
+		Connects to the server
+
+		:param host: The server address as tuple of (HOST, PORT).
+		"""
+
 		if not host:
 			host = self.host
 
-		self.d.info("connecting to " + str(host))
+		self.d.info("Connecting to " + str(host))
+
+		# connect to server socket
 		self.sock.connect(self.host)
 
 	def disconnect(self):
-		if self.sock:
-			self.d.info("disconnecting from " + str(self.host))
-			self.sock.close()
+		"""Disconnects from the server if already connected."""
 
-	def on_rpl_endofmotd(self, params):
-		self.join(self.config['autojoin'])
+		if not self.sock:
+			return
+
+		self.d.info("Disconnecting from " + str(self.host))
+		self.sock.close()
+
+	def send(self, msg):
+		"""
+		Sends raw messages to the server.
+
+		:param msg: Message to be sent.
+
+		:return: success of the send operation
+		"""
+
+		self.d.notice("<< " + msg)
+		return self.sock.sendall(msg + "\r\n")
 
 	def quit(self, quit_msg=""):
+		"""
+		Sends a QUIT command to the server. Then disconnects.
+
+		:param quit_msg: Quit message.
+		"""
+
 		self.send('QUIT %s' % quit_msg)
 		self.disconnect()
-
-	def auth(self, password):
-		self.msg('nickserv', 'identify %s %s' % (self.nickname, password))
 
 	def join(self, channels):
 		self.send('JOIN %s' % channels)
@@ -200,10 +241,6 @@ class BotBot(object):
 
 	def notice(self, dest, msg):
 		self.send("NOTICE %s :%s" % (dest, msg))
-
-	def send(self, msg):
-		self.d.notice("<< " + msg)
-		self.sock.sendall(msg + "\r\n")
 
 	def msg(self, target, text):
 		self.send("PRIVMSG %s :%s" % (target, text))
@@ -219,7 +256,7 @@ class BotBot(object):
 		self.nick(self.nick_name)
 
 		# set default user and real name
-		self.send("USER %s 0 0 :%s" % (self.nick_name, self.config['realname']))
+		self.send("USER %s 0 0 :%s" % (self.nick_name, self.real_name))
 		
 		# TODO: move to plugin!
 		# Authenticate at Nickserv:
@@ -231,23 +268,14 @@ class BotBot(object):
 			except:
 				sys.exit(0)
 
-			# fill buffer with lines
-			self.buffer = recv.split("\n")
-
-			for line in self.buffer:
-				line = line.rstrip("\r\n")
+			for line in recv.split("\n"):
+				line = line.rstrip()
 
 				# ignore empty lines
 				if not line: continue
 
-				# local echo
-				# print line
-
 				# handle irc commands				
 				self.handle_irc(line)
-
-			# reset buffer
-			self.buffer = None
 
 	def handle_irc(self, raw_msg):
 		# try to parse raw irc message
@@ -261,11 +289,12 @@ class BotBot(object):
 		else:
 			method = "on_" + msg['cmd']
 
-		if method in dir(self):
-			self.invoke_hook(method, msg)
+		self.invoke_hook(method, msg)
 
 	def invoke_hook(self, method, msg_parts):
-		m = getattr(self, method)
-		if m:
-			print "--- Handling %s" % method
-			m(msg_parts)
+		if method in dir(self):
+			m = getattr(self, method)
+
+			if m:
+				print "--- Handling %s" % method
+				m(msg_parts)

@@ -1,19 +1,17 @@
 # coding: utf-8
 PATHS = {
-	"plugindir": "plugins",
+	"plugins": "plugins",
 }
 
 IDENTITY = {
-	'nick': 'jxBot',
+	'nick': 'jxaBot',
 	'realname': 'Cool Bot',
 	#'password': 'XXX',
 }
 
-SERVERS = (
-	('irc.freenode.org', 6667)
-)
+HOST = ('irc.freenode.org', 6667)
 
-AUTO_JOIN = ("#bsxlab")
+AUTOJOIN = ("#bsxlab")
 
 PLUGINS = (
 	'basic.Basic',

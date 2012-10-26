@@ -27,4 +27,6 @@ pip-log.txt
 .mr.developer.cfg
 
 # own files
+documentation.prj
 test.py
+docs/

@@ -1,7 +1,7 @@
 # coding: utf-8
 """
 Copyright 2012
-	Anton Zering <synth@lostprofile.de>
+   Anton Zering <synth@lostprofile.de>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,11 +19,17 @@ limitations under the License.
 from plugin import Plugin
 
 class Basic(Plugin):
-	def __init__(self):
-		Plugin.__init__(self)
+	def __init__(self, context):
+		Plugin.__init__(self, context)
 
 	def on_privmsg(self, params):
 		text = params['text']
 
 		if text.startswith('!') and text == "!kill":
-			self.c.quit()
+			self.context.quit()
+
+	def on_rpl_endofmotd(self, params):
+		self.context.join(self.context.config.AUTOJOIN)
+
+	def auth(self, password):
+		self.context.msg('nickserv', 'identify %s %s' % (self.nickname, password))
