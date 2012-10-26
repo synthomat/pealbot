@@ -11,6 +11,8 @@ At the moment it supports:
 
 API Documentation can be found at http://synthomat.de/pealbot/docs/
 
+Tests are continuously run using Travis-CI:
+[![Build Status](https://travis-ci.org/synthomat/pealbot.png)](https://travis-ci.org/synthomat/pealbot)
 
 ## License
 Copyright (c) 2012 Anton Zering <<synth@lostprofile.de>>
