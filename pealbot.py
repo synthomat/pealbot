@@ -2,9 +2,7 @@
 # coding: utf-8
 
 """
-Copyright 2012
-   Anton Zering <synth@lostprofile.de>
-   Jules Held <nemesis@creative-heads.org>
+Copyright (c) 2012 Anton Zering <synth@lostprofile.de>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -42,9 +40,23 @@ class PealBot(BotBot):
 		self.plugin_dispatcher = PluginDispatcher(self, config.PATHS['plugins'])
 		self.plugin_dispatcher.load_plugins(config.PLUGINS)
 
-	def invoke_hook(self, method, msg_parts):
-		BotBot.invoke_hook(self, method, msg_parts)
-		self.plugin_dispatcher.invoke_hook(method, msg_parts)
+	def handle_irc(self, msg):
+		# handle "built in" event hooks
+		BotBot.handle_irc(self, msg)
+
+		# handle plugin event hooks
+		self.plugin_dispatcher.handle_irc(msg)
+
+	def exit(self, exit_code=0):
+		# invoke system hook
+		self.plugin_dispatcher.invoke_all("before_unload")
+		BotBot.exit(self, exit_code)
+
+	def quit(self, quit_msg=''):
+		# invoke system hook
+		self.plugin_dispatcher.invoke_all("before_quit")
+		BotBot.quit(self, quit_msg)
+
 
 if __name__ == '__main__':
 	import config

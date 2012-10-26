@@ -1,7 +1,6 @@
 # coding: utf-8
 """
-Copyright 2012
-   Anton Zering <synth@lostprofile.de>
+Copyright (c) 2012 Anton Zering <synth@lostprofile.de>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -117,22 +116,36 @@ class IRCParser(object):
 		except:
 			return default
 
-def lookup_hook(context, name, prefix="on_", lookup_table=None):
+def lookup_hook(context, name, lookup_table=None, prefix="on_"):
 	"""
 	Lookup chain:
 
-	1. member method with prefix (i.e. on_join, on_351)
-	2. method within lookup table
-	3. raise exception
+	1. return member method with prefix (i.e. on_join, on_351)
+	2. return method within lookup table
+	3. return none
 
-	:param context: Blablubb
-	"""	
-	
-	name = prefix + name
+	:param context: object to be instrospected
+	:param method_name: method to find
+	:param lookup_table: lookup table (dict NUM => reply_method)
+	:param prefix: search with prefix in the method name
+	"""
+
 	method = None
-	if name in dir(context):
-		method = getattr(context, name)
-	elif name.isdigit():
-		pass
+	method_name = prefix + str(name)
 
-	return method
+	# hook name exists in context?
+	if method_name in dir(context):
+		return getattr(context, method_name)
+
+	# lookup_table provided? name is digit and can be looked up?
+	elif lookup_table and str(name).isdigit() and int(name) in lookup_table:
+		name = int(name)
+
+		# resolve code to hook name
+		method_name = prefix + lookup_table[name]
+
+		# hook name exists in context?
+		if method_name in dir(context):
+			return getattr(context, prefix + lookup_table[name])
+
+	return None

@@ -1,7 +1,7 @@
 # coding: utf-8
+
 """
-Copyright 2012
-   Anton Zering <synth@lostprofile.de>
+Copyright (c) 2012 Anton Zering <synth@lostprofile.de>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -29,7 +29,9 @@ class Basic(Plugin):
 			self.context.quit()
 
 	def on_rpl_endofmotd(self, params):
-		self.context.join(self.context.config.AUTOJOIN)
+		# autojoin channels
+		for chan in self.context.config.AUTOJOIN:
+			self.context.join(chan)
 
 	def auth(self, password):
 		self.context.msg('nickserv', 'identify %s %s' % (self.nickname, password))

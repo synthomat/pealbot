@@ -1,7 +1,7 @@
 # coding: utf-8
+
 """
-Copyright 2012
-   Anton Zering <synth@lostprofile.de>
+Copyright (c) 2012 Anton Zering <synth@lostprofile.de>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -27,3 +27,9 @@ class Plugin(object):
 		
 		self.context = context
 		self.d.info("loaded...")
+
+	def before_unload(self):
+		pass
+
+	def before_quit(self):
+		pass

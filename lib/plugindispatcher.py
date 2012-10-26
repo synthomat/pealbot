@@ -1,7 +1,6 @@
 # coding: utf-8
 """
-Copyright 2012
-   Anton Zering <synth@lostprofile.de>
+Copyright (c) 2012 Anton Zering <synth@lostprofile.de>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,7 +17,8 @@ limitations under the License.
 
 import importlib
 import sys
-from tools import Debug
+from tools import Debug, lookup_hook
+from pybot import codes
 
 class PluginDispatcher(object):
 	def __init__(self, context, plugin_dir="plugins"):
@@ -48,12 +48,18 @@ class PluginDispatcher(object):
 
 		return cls
 
-	def invoke_hook(self, method, msg_parts):
+	def invoke_all(self, method_name):
 		for plugin in self.plugins:
-			if method in dir(plugin):
-				print "-- %s found in %s" % (method, plugin)
-				hook = getattr(plugin, method)
-				ret = hook(msg_parts)
+			if method_name in dir(plugin):
+				m = getattr(plugin, method_name)
+				m()
 
+	def handle_irc(self, msg):
+		for plugin in self.plugins:
+			method = lookup_hook(plugin, msg.get('cmd'), codes)
+
+			if method:
+				ret = method(msg)
+				
 				if ret == plugin.LAST:
 					break

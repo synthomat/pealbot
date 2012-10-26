@@ -10,16 +10,12 @@ At the moment it supports:
 - apply password-protected username
 
 
----
-
 ## License
-Copyright 2012
-	Anton Zering <synth@lostprofile.de>
-	Jules Held <nemesis@creative-heads.org>
+Copyright (c) 2012 Anton Zering <<synth@lostprofile.de>>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+You may obtain a copy of the License at  
 
    http://www.apache.org/licenses/LICENSE-2.0
 

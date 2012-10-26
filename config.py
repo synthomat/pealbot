@@ -11,9 +11,9 @@ IDENTITY = {
 
 HOST = ('irc.freenode.org', 6667)
 
-AUTOJOIN = ("#bsxlab")
+AUTOJOIN = ("#bsxlab",)
 
 PLUGINS = (
 	'basic.Basic',
-	#'quotes.Quotes',
+	'quotes.Quotes',
 )

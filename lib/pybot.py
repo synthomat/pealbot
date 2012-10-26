@@ -1,8 +1,7 @@
 # coding: utf-8
+
 """
-Copyright 2012
-   Anton Zering <synth@lostprofile.de>
-   Jules Held <nemesis@creative-heads.org>
+Copyright (c) 2012 Anton Zering <synth@lostprofile.de>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -21,7 +20,7 @@ import re
 import socket
 import sys
 
-from tools import Debug, IRCParser
+from tools import Debug, IRCParser, lookup_hook
 
 codes = {
 	##
@@ -231,22 +230,62 @@ class BotBot(object):
 		self.disconnect()
 
 	def join(self, channels):
-		self.send('JOIN %s' % channels)
+		"""
+		Sends a JOIN message to the server to joins one or multiple channels
 
-	def part(self, channels, quit_msg=None):
-		self.send('PART %s :%s' % (channels, quit_msg))
+		:param channels: One or more channels separated by whitespaces.
+		"""
+
+		return self.send('JOIN %s' % channels)
+
+	def part(self, channels, part_msg=None):
+		"""
+		Sends the PART message to the searver to leave one or multiple channels
+
+		:param channels: One or more channels separated by whitespaces.
+		:param quit_message: Part message to appear in the channel
+		"""
+
+		return self.send('PART %s :%s' % (channels, part_msg))
 
 	def nick(self, new_nick):
-		self.send("NICK %s" % new_nick)
+		"""
+		Sends the NICK message to the server to try a nickname change of the bot
 
-	def notice(self, dest, msg):
-		self.send("NOTICE %s :%s" % (dest, msg))
+		:param new_nick: The new nick
+		"""
 
-	def msg(self, target, text):
-		self.send("PRIVMSG %s :%s" % (target, text))
+		return self.send("NICK %s" % new_nick)
+
+	def notice(self, target, msg):
+		"""
+		Sends a NOTICE message to a reciever
+
+		:param target: Reciever of the message
+		:param msg: Message to be sent
+		"""
+
+		return self.send("NOTICE %s :%s" % (target, msg))
+
+	def msg(self, target, msg):
+		"""
+		Sends a PRIVMSG message to a channel or another client
+
+		:param targer: Reciever of the message. Channel or a nick name.
+		:param msg: Message to be sent
+		"""
+		return self.send("PRIVMSG %s :%s" % (target, msg))
 
 	def on_ping(self, params):
+		"""
+		Handles PING messages from the server
+
+		"""
+
 		self.send("PONG :%s" % params['text'])
+
+	def exit(self, exit_code=0):
+		sys.exit(exit_code)
 
 	def start(self):
 		# connect to server
@@ -264,9 +303,9 @@ class BotBot(object):
 
 		while True:
 			try:
-				recv = self.sock.recv(2048)
+				recv = self.sock.recv(1024)
 			except:
-				sys.exit(0)
+				self.exit(0)
 
 			for line in recv.split("\n"):
 				line = line.rstrip()
@@ -274,27 +313,14 @@ class BotBot(object):
 				# ignore empty lines
 				if not line: continue
 
-				# handle irc commands				
-				self.handle_irc(line)
+				# handle irc commands
+				msg = self.parser.parse(line)
 
-	def handle_irc(self, raw_msg):
-		# try to parse raw irc message
-		msg = self.parser.parse(raw_msg)
-		
-		# message could not be parsed
-		if not msg: return
+				if msg:		
+					self.handle_irc(msg)
 
-		if msg['cmd'].isdigit() and int(msg['cmd']) in codes:
-			method = "on_" + codes[int(msg['cmd'])]
-		else:
-			method = "on_" + msg['cmd']
+	def handle_irc(self, msg):
+		method = lookup_hook(self, msg.get('cmd'), codes)
 
-		self.invoke_hook(method, msg)
-
-	def invoke_hook(self, method, msg_parts):
-		if method in dir(self):
-			m = getattr(self, method)
-
-			if m:
-				print "--- Handling %s" % method
-				m(msg_parts)
+		if method:
+			method(msg)

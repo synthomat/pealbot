@@ -1,6 +1,5 @@
 """
-Copyright 2012
-	Anton Zering <synth@lostprofile.de>
+Copyright (c) 2012 Anton Zering <synth@lostprofile.de>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,8 +18,8 @@ from random import shuffle
 from plugin import Plugin
 
 class Quotes(Plugin):
-	def __init__(self):
-		Plugin.__init__(self)
+	def __init__(self, context):
+		Plugin.__init__(self, context)
 
 		self.file_name = "quotes.txt"
 		self.quotes = []
@@ -30,12 +29,10 @@ class Quotes(Plugin):
 			pass
 	
 	def get_random(self):
-		from random import shuffle
 		shuffle(self.quotes)
 		return self.quotes[0]
 
 	def add(self, text):
-		print "Adding %s" % text
 		self.quotes.append(text)
 
 	def save(self):
@@ -49,7 +46,6 @@ class Quotes(Plugin):
 		if not text.startswith('!'):
 			return
 
-		print "Q: Command!"
 
 		try:
 			if ' ' in text:
@@ -57,15 +53,18 @@ class Quotes(Plugin):
 			else:
 				cmd, par = text, None
 			
-			cmd = cmd[1:]
+			cmd = cmd[1:]			
 
 			if cmd == "add":
 				self.add(par)
 				return
 
 			if cmd == "q":
-				self.c.msg(params['dest'], self.get_random())
+				self.context.msg(params['dest'][0], self.get_random())
 				return
 
 		except:
 			return
+
+	def before_unload(self):
+		self.save()
