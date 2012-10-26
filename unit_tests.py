@@ -3,7 +3,7 @@
 
 import unittest
 
-from lib.parser import IRCParser
+from lib.tools import IRCParser
 
 class IRCParserTest(unittest.TestCase):
 	def setUp(self):
