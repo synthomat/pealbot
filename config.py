@@ -23,5 +23,6 @@ AUTOJOIN = ("#bsxlab",)
 
 PLUGINS = (
 	'basic.Basic',
+	'testplugin.TestPlugin',
 	#'quotes.Quotes',
 )

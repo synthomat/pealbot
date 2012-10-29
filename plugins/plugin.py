@@ -36,5 +36,27 @@ class Plugin(object):
 	def before_quit(self):
 		pass
 
-class Command(Plugin):
-	pass
+from lib.tools import lookup_hook
+
+class CommandPlugin(Plugin):
+
+	def on_privmsg(self, params):
+		self.invoke(params)
+
+	def invoke(self, parsed_msg):
+		text = parsed_msg.get('text')
+
+		if not text.startswith('!'):
+			return
+
+		if ' ' in text:
+			cmd, params = text.split(' ', 1)
+		else:
+			cmd, params = text, None
+
+		cmd = cmd.lstrip('!')
+
+		meth = lookup_hook(self, cmd, lookup_table=None, prefix="on_cmd_")
+
+		if meth:
+			meth(params, parsed_msg)

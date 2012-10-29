@@ -16,26 +16,28 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from plugin import Plugin
-
-class Basic(Plugin):
-	"""
-	Essential plugin for the bot.
-	It handles commands and autojoins.
-
-	:author: Anton Zering <synth@lostprofile.de>
-	:copyright: 2012, Anton Zering
-	:license: Apache License, Version 2.0
-	"""
-
+from plugin import CommandPlugin
+import datetime
+class TestPlugin(CommandPlugin):
 	def __init__(self, context):
-		Plugin.__init__(self, context)
+		CommandPlugin.__init__(self, context)
 
-	def on_rpl_endofmotd(self, params):
-		"""RPL_ENDOFMOTD is used to auto join channels."""
-		# autojoin channels
-		for chan in self.context.config.AUTOJOIN:
-			self.context.join(chan)
+	def on_cmd_say(self, p, params):
+		chan = params['dest'][0]
+		nick = params['nick']
+		self.context.msg(chan, "%s" % p)
 
-	def auth(self, password):
-		self.context.msg('nickserv', 'identify %s %s' % (self.nickname, password))
+	def on_cmd_kill(self, p, params):
+		self.context.quit()
+
+	def on_cmd_join(self, p, params):
+		self.context.join(p)
+
+	def on_cmd_part(self, p, params):
+		chan = params['dest'][0]
+		self.context.part(chan)
+
+	def on_cmd_now(self, p, params):
+		chan = params['dest'][0]
+
+		self.context.msg(chan, datetime.datetime.now())

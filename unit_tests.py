@@ -78,5 +78,16 @@ class LookupHookTest(unittest.TestCase):
 		self.assertIsNotNone(m)
 		self.assertEquals(m, self.tc.on_looked_up)
 
+from plugins.plugin import CommandPlugin
+
+class CommandPluginTest(unittest.TestCase):
+	def setUp(self):
+		self.cp = CommandPlugin(None)
+		self.msg = {'dest': ['#bsxlab'], 'text': '!say Testnachricht', 'cmd': 'privmsg',
+					'nick': 'synthom', 'host': 'cetus.uberspace.de', 'user': 'synth'}
+
+	def test_cp(self):
+		self.cp.invoke(self.msg)
+
 if __name__ == '__main__':
     unittest.main()
