@@ -82,7 +82,7 @@ class PluginDispatcher(object):
 		:param msg: Parsed irc message (IRCParser)
 		"""
 		for plugin in self.plugins:
-			method = lookup_hook(plugin, msg.get('cmd'), codes)
+			method = lookup_hook(plugin, msg.cmd, codes)
 
 			if method:
 				ret = method(msg)

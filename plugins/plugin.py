@@ -39,24 +39,21 @@ class Plugin(object):
 from lib.tools import lookup_hook
 
 class CommandPlugin(Plugin):
+	def on_privmsg(self, msg):
+		if msg.trail.startswith('!'):
+			self.invoke(msg)
 
-	def on_privmsg(self, params):
-		self.invoke(params)
-
-	def invoke(self, parsed_msg):
-		text = parsed_msg.get('text')
-
-		if not text.startswith('!'):
-			return
-
-		if ' ' in text:
-			cmd, params = text.split(' ', 1)
+	def invoke(self, msg):
+		# distinguish between commands with and without parameters
+		if ' ' in msg.trail:
+			cmd, params = msg.trail.split(' ', 1)
 		else:
-			cmd, params = text, None
+			cmd, params = msg.trail, None
 
+		# strip the ! away
 		cmd = cmd.lstrip('!')
 
 		meth = lookup_hook(self, cmd, lookup_table=None, prefix="on_cmd_")
 
 		if meth:
-			meth(params, parsed_msg)
+			meth(params, msg)

@@ -22,22 +22,22 @@ class TestPlugin(CommandPlugin):
 	def __init__(self, context):
 		CommandPlugin.__init__(self, context)
 
-	def on_cmd_say(self, p, params):
-		chan = params['dest'][0]
-		nick = params['nick']
+	def on_cmd_say(self, p, msg):
+		chan = msg.targets[0]
+		nick = msg.nick
 		self.context.msg(chan, "%s" % p)
 
-	def on_cmd_kill(self, p, params):
+	def on_cmd_kill(self, p, msg):
 		self.context.quit()
 
-	def on_cmd_join(self, p, params):
+	def on_cmd_join(self, p, msg):
 		self.context.join(p)
 
-	def on_cmd_part(self, p, params):
-		chan = params['dest'][0]
+	def on_cmd_part(self, p, msg):
+		chan = msg.targets[0]
 		self.context.part(chan)
 
-	def on_cmd_now(self, p, params):
-		chan = params['dest'][0]
+	def on_cmd_now(self, p, msg):
+		chan = msg.targets[0]
 
 		self.context.msg(chan, datetime.datetime.now())

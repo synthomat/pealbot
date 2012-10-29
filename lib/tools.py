@@ -14,9 +14,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-__all__ = ['Debug', 'IRCParser', 'lookup_hook']
+__all__ = ['Debug', 'lookup_hook']
 
-import re
 from termcolor import cprint
 
 class Debug(object):
@@ -75,61 +74,6 @@ class Debug(object):
 		:param text: Error text to be printed
 		"""
 		cprint("!!%s %s" % (self.prefix, text), 'red')
-
-
-class IRCParser(object):
-	"""
-	Parses raw irc messages from the server
-
-	:author: Anton Zering <synth@lostprofile.de>
-
-	:copyright: 2012, Anton Zering
-	:license: Apache License, Version 2.0
-	"""
-
-	def __init__(self):
-		self.msg = None
-
-		# compiled regular expression to parse irc messages		 
-		self.rx = re.compile(r"(:((?P<nick>\w+)!~(?P<user>\w+)@)?(?P<host>\S*) )?(?P<cmd>\S+) (?P<dest>.+)?:(?P<text>.+)")
-
-	def parse(self, raw_msg):
-		"""
-		Parses raw irc messages and returns the coresponding python dictionary
-
-		:param raw_msg: raw irc message to be parsed
-		:return: python dictionary with keys ['nick', 'user', 'host', 'cmd', ['dest1', 'dest2', ...], 'text']
-		"""
-
-		try:
-			# try to match regex
-			self.msg = self.rx.match(raw_msg).groupdict()
-		except:
-			# match failed - reset msg
-			self.msg = None
-			return None
-
-		# lowercase uppercase irc commands
-		self.msg['cmd'] = self.msg['cmd'].lower()
-
-		# split destination part into a python list
-		if self.msg['dest']:
-			self.msg['dest'] = self.msg['dest'].split()
-
-		return self.msg
-
-	def get(self, key, default=None):
-		"""
-		Returns a value from a parsed irc message
-
-		:param key: lookup key
-		:param default: default value in case that the key is None
-		:return: string
-		"""
-		try:
-			return self.msg[key]
-		except:
-			return default
 
 def lookup_hook(context, name, lookup_table=None, prefix="on_"):
 	"""

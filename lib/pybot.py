@@ -20,7 +20,8 @@ import re
 import socket
 import sys
 
-from tools import Debug, IRCParser, lookup_hook
+from irc import IRCMessage
+from tools import Debug, lookup_hook
 
 codes = {
 	##
@@ -180,8 +181,6 @@ class BotBot(object):
 
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-		self.parser = IRCParser()
-
 	def connect(self, host=None):
 		"""
 		Connects to the server
@@ -218,14 +217,14 @@ class BotBot(object):
 		self.d.notice("<< " + msg)
 		return self.sock.sendall(msg + "\r\n")
 
-	def quit(self, quit_msg=""):
+	def quit(self, quit_reason=""):
 		"""
 		Sends a QUIT command to the server. Then disconnects.
 
 		:param quit_msg: Quit message.
 		"""
 
-		self.send('QUIT %s' % quit_msg)
+		self.send('QUIT %s' % quit_reason)
 		self.disconnect()
 
 	def join(self, channels):
@@ -237,7 +236,7 @@ class BotBot(object):
 
 		return self.send('JOIN %s' % channels)
 
-	def part(self, channels, part_msg=None):
+	def part(self, channels, part_reason=None):
 		"""
 		Sends the PART message to the searver to leave one or multiple channels
 
@@ -245,7 +244,7 @@ class BotBot(object):
 		:param part_msg: Part message to appear in the channel
 		"""
 
-		return self.send('PART %s :%s' % (channels, part_msg))
+		return self.send('PART %s :%s' % (channels, part_reason))
 
 	def nick(self, new_nick):
 		"""
@@ -256,7 +255,7 @@ class BotBot(object):
 
 		return self.send("NICK %s" % new_nick)
 
-	def notice(self, target, msg):
+	def notice(self, target, text):
 		"""
 		Sends a NOTICE message to a reciever
 
@@ -264,24 +263,24 @@ class BotBot(object):
 		:param msg: Message to be sent
 		"""
 
-		return self.send("NOTICE %s :%s" % (target, msg))
+		return self.send("NOTICE %s :%s" % (target, text))
 
-	def msg(self, target, msg):
+	def msg(self, target, text):
 		"""
 		Sends a PRIVMSG message to a channel or another client
 
 		:param target: Reciever of the message. Channel or a nick name.
 		:param msg: Message to be sent
 		"""
-		return self.send("PRIVMSG %s :%s" % (target, msg))
+		return self.send("PRIVMSG %s :%s" % (target, text))
 
-	def on_ping(self, params):
+	def on_ping(self, msg):
 		"""
 		Handles PING messages from the server
 
 		"""
 
-		self.send("PONG :%s" % params['text'])
+		self.send("PONG :%s" % msd.trail)
 
 	def exit(self, exit_code=0):
 		sys.exit(exit_code)
@@ -302,25 +301,24 @@ class BotBot(object):
 
 		while True:
 			try:
-				recv = self.sock.recv(128)
+				recv = self.sock.recv(2048)
 				# print recv
 			except:
 				self.exit(0)
 
-			for line in recv.split("\n"):
-				line = line.rstrip()
+			for line in recv.split("\r\n"):
 
 				# ignore empty lines
 				if not line: continue
 
 				# handle irc commands
-				msg = self.parser.parse(line)
+				msg = IRCMessage.parse(line)
 
-				if msg:		
+				if msg:
 					self.handle_irc(msg)
 
 	def handle_irc(self, msg):
-		method = lookup_hook(self, msg.get('cmd'), codes)
+		method = lookup_hook(self, msg.cmd, codes)
 
 		if method:
 			return method(msg)

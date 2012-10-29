@@ -52,11 +52,11 @@ class PealBot(BotBot):
 		self.plugin_dispatcher.invoke_all("before_unload")
 		BotBot.exit(self, exit_code)
 
-	def quit(self, quit_msg=''):
+	def quit(self, quit_reason=''):
 		"""Invokes the before_quit hook of all loaded plugins before the QUIT message is sent to the server."""
 		# invoke system hook
 		self.plugin_dispatcher.invoke_all("before_quit")
-		BotBot.quit(self, quit_msg)
+		BotBot.quit(self, quit_reason)
 
 
 if __name__ == '__main__':

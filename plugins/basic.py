@@ -31,7 +31,7 @@ class Basic(Plugin):
 	def __init__(self, context):
 		Plugin.__init__(self, context)
 
-	def on_rpl_endofmotd(self, params):
+	def on_rpl_endofmotd(self, msg):
 		"""RPL_ENDOFMOTD is used to auto join channels."""
 		# autojoin channels
 		for chan in self.context.config.AUTOJOIN:
