@@ -25,7 +25,7 @@ from lib.tools import Debug
 class PealBot(BotBot):
 	"""
 	:author: Anton Zering <synth@lostprofile.de>
-	:author: Jules Held <nemesis@creative-heads.org>
+	:author: Julian Held <nemesis@creative-heads.org>
 	:copyright: 2012, Anton Zering
 	:license: Apache License, Version 2.0
 	"""

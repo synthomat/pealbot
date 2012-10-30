@@ -19,8 +19,25 @@ limitations under the License.
 from plugin import CommandPlugin
 import datetime
 class TestPlugin(CommandPlugin):
+	
+	
 	def __init__(self, context):
 		CommandPlugin.__init__(self, context)
+		global starttime
+		starttime = datetime.datetime.now()
+	
+	def calc_onlinetime(self):
+		timenow = datetime.datetime.now()
+		onlinetime = timenow - starttime
+		return onlinetime
+	
+	def on_cmd_online(self, p, msg):
+		chan = msg.targets[0]
+		self.context.msg(chan, self.calc_onlinetime())
+	
+	def on_cmd_status(self, p, msg):
+		chan = msg.targets[0]
+		self.context.msg(chan,  "Online for: %s" % self.calc_onlinetime())
 
 	def on_cmd_say(self, p, msg):
 		chan = msg.targets[0]
