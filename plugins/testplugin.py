@@ -1,7 +1,10 @@
 # coding: utf-8
 
 """
-Copyright (c) 2012 Anton Zering <synth@lostprofile.de>
+Copyright (c) 2012 
+
+Anton Zering <synth@lostprofile.de>
+Julian Held <nemesis@creative-heads.org>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -56,5 +59,4 @@ class TestPlugin(CommandPlugin):
 
 	def on_cmd_now(self, p, msg):
 		chan = msg.targets[0]
-
 		self.context.msg(chan, datetime.datetime.now())

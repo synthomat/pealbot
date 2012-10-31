@@ -280,7 +280,7 @@ class BotBot(object):
 
 		"""
 
-		self.send("PONG :%s" % msd.trail)
+		self.send("PONG :%s" % msg.trail)
 
 	def exit(self, exit_code=0):
 		sys.exit(exit_code)

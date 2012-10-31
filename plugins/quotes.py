@@ -1,5 +1,8 @@
 """
-Copyright (c) 2012 Anton Zering <synth@lostprofile.de>
+Copyright (c) 2012 
+
+Anton Zering <synth@lostprofile.de>
+Julian Held <nemesis@creative-heads.org>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -13,14 +16,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+from plugin import CommandPlugin
 from random import shuffle
-from plugin import Plugin
-
-class Quotes(Plugin):
+class Quotes(CommandPlugin):
+	
 	def __init__(self, context):
-		Plugin.__init__(self, context)
-
+		CommandPlugin.__init__(self, context)
 		self.file_name = "quotes.txt"
 		self.quotes = []
 		try:
@@ -29,8 +30,11 @@ class Quotes(Plugin):
 			pass
 	
 	def get_random(self):
-		shuffle(self.quotes)
-		return self.quotes[0]
+		if self.quotes:
+			return "No quotes available!"
+		else:
+			shuffle(self.quotes)
+			return self.quotes[0]
 
 	def add(self, text):
 		self.quotes.append(text)
@@ -40,31 +44,15 @@ class Quotes(Plugin):
 		f.write("\n".join(self.quotes))
 		f.close()
 
-	def on_privmsg(self, params):
-		text = params['text']
+	def on_cmd_add(self, p, msg):
+		chan = msg.targets[0]
+		self.add(p)
+		self.context.msg(chan, "Added quote: %s!" % p)
 
-		if not text.startswith('!'):
-			return
-
-
-		try:
-			if ' ' in text:
-				cmd, par = text.split(' ', 1)
-			else:
-				cmd, par = text, None
-			
-			cmd = cmd[1:]			
-
-			if cmd == "add":
-				self.add(par)
-				return
-
-			if cmd == "q":
-				self.context.msg(params['dest'][0], self.get_random())
-				return
-
-		except:
-			return
-
+	def on_cmd_q(self, p, msg):
+		chan = msg.targets[0]
+		quote = self.get_random()
+		self.context.msg(chan, "%s" % quote)
+	
 	def before_unload(self):
 		self.save()
