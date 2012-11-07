@@ -3,7 +3,7 @@
 
 import unittest
 
-from lib.irc import IRCMessage
+from pealbot import IRCMessage
 
 class IRCParserTest(unittest.TestCase):
 	"""
@@ -66,22 +66,6 @@ class LookupHookTest(unittest.TestCase):
 		self.assertIsNotNone(m)
 		self.assertEquals(m, self.tc.on_named)
 
-	def test_method_named(self):
-		table = {111: "looked_up"}
-		m = lookup_hook(self.tc, 111, table)
-
-		self.assertIsNotNone(m)
-		self.assertEquals(m, self.tc.on_looked_up)
-
-from plugins.plugin import CommandPlugin
-
-class CommandPluginTest(unittest.TestCase):
-	def setUp(self):
-		self.cp = CommandPlugin(None)
-		self.msg = IRCMessage.parse(":synthom!~synth@example.com PRIVMSG #bsxlab :!say test message")
-
-	def test_cp(self):
-		self.cp.invoke(self.msg)
 
 if __name__ == '__main__':
     unittest.main()

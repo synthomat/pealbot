@@ -23,6 +23,7 @@ AUTOJOIN = ("#bsxlab",)
 
 PLUGINS = (
 	'basic.Basic',
+	'admin.Admin',
 	'testplugin.TestPlugin',
 	'quotes.Quotes',
 )

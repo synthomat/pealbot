@@ -1,8 +1,7 @@
 """
 Copyright (c) 2012 
-
-Anton Zering <synth@lostprofile.de>
-Julian Held <nemesis@creative-heads.org>
+   Anton Zering <synth@lostprofile.de>
+   Julian Held <nemesis@creative-heads.org>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,8 +19,10 @@ from plugin import CommandPlugin
 from random import shuffle
 class Quotes(CommandPlugin):
 	
-	def __init__(self, context):
-		CommandPlugin.__init__(self, context)
+	def __init__(self, ctx):
+		CommandPlugin.__init__(self, ctx)
+		self.subscribe("plugins.before_unload", self.before_unload)
+
 		self.file_name = "quotes.txt"
 		self.quotes = []
 		try:
@@ -30,7 +31,7 @@ class Quotes(CommandPlugin):
 			pass
 	
 	def get_random(self):
-		if self.quotes:
+		if not self.quotes:
 			return "No quotes available!"
 		else:
 			shuffle(self.quotes)
@@ -47,12 +48,12 @@ class Quotes(CommandPlugin):
 	def on_cmd_add(self, p, msg):
 		chan = msg.targets[0]
 		self.add(p)
-		self.context.msg(chan, "Added quote: %s!" % p)
+		self.ctx.msg(chan, "Added quote: %s!" % p)
 
 	def on_cmd_q(self, p, msg):
 		chan = msg.targets[0]
 		quote = self.get_random()
-		self.context.msg(chan, "%s" % quote)
+		self.ctx.msg(chan, "%s" % quote)
 	
 	def before_unload(self):
 		self.save()

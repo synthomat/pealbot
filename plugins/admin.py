@@ -20,31 +20,17 @@ limitations under the License.
 """
 
 from plugin import CommandPlugin
-import datetime
-class TestPlugin(CommandPlugin):	
+
+class Admin(CommandPlugin):	
 	def __init__(self, ctx):
 		CommandPlugin.__init__(self, ctx)
 
-		self.starttime = datetime.datetime.now()
-	
-	def calc_onlinetime(self):
-		timenow = datetime.datetime.now()
-		onlinetime = timenow - self.starttime
-		return onlinetime
-	
-	def on_cmd_online(self, p, msg):
-		chan = msg.targets[0]
-		self.ctx.msg(chan, self.calc_onlinetime())
-	
-	def on_cmd_status(self, p, msg):
-		chan = msg.targets[0]
-		self.ctx.msg(chan,  "Online for: %s" % self.calc_onlinetime())
+	def on_cmd_kill(self, p, msg):
+		self.ctx.quit()
 
-	def on_cmd_say(self, p, msg):
-		chan = msg.targets[0]
-		nick = msg.nick
-		self.ctx.msg(chan, "%s" % p)
+	def on_cmd_join(self, p, msg):
+		self.ctx.join(p)
 
-	def on_cmd_now(self, p, msg):
+	def on_cmd_part(self, p, msg):
 		chan = msg.targets[0]
-		self.ctx.msg(chan, datetime.datetime.now())
+		self.ctx.part(chan)

@@ -1,7 +1,8 @@
 # coding: utf-8
 
 """
-Copyright (c) 2012 Anton Zering <synth@lostprofile.de>
+Copyright (c) 2012
+   Anton Zering <synth@lostprofile.de>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -28,14 +29,13 @@ class Basic(Plugin):
 	:license: Apache License, Version 2.0
 	"""
 
-	def __init__(self, context):
-		Plugin.__init__(self, context)
+	def __init__(self, ctx):
+		Plugin.__init__(self, ctx)
 
-	def on_rpl_endofmotd(self, msg):
+		self.subscribe("irc.rpl_endofmotd", self.autojoin)
+
+	def autojoin(self, msg=None):
 		"""RPL_ENDOFMOTD is used to auto join channels."""
-		# autojoin channels
-		for chan in self.context.config.AUTOJOIN:
-			self.context.join(chan)
 
-	def auth(self, password):
-		self.context.msg('nickserv', 'identify %s %s' % (self.nickname, password))
+		for chan in self.ctx.config.AUTOJOIN:
+			self.ctx.join(chan)
