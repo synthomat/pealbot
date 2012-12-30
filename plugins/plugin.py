@@ -19,45 +19,42 @@ limitations under the License.
 
 __all__ = ['Plugin', 'CommandPlugin']
 
-from lib.tools import Debug, lookup_hook
+from lib.tools import Debug
 from lib.cyrusbus import Bus
 
 class Plugin(object):
-	def __init__(self, ctx):
+	export = []
+	key = '!'
+
+	def __init__(self, bot):
 		self.d = Debug("[Mod] " + self.__class__.__name__)
-		self.ctx = ctx
+		self.bot = bot
+		self.subscribe("irc.privmsg", self.invoke_cmd)
+
+		self.export = [e.lower() for e in self.export]
+
+	def invoke_cmd(self, msg):
+		if not msg.text.startswith(self.key):
+			return
+
+		cmd, _, params = msg.text[1:].partition(' ')
+		cmd = cmd.lower()
+
+		if not cmd in self.export:
+			return
+		try:
+			method_name = "on_cmd_" + cmd
+			method = getattr(self, method_name)
+			method(msg, params)
+		except Exception as e:
+			print e
+			return
 
 	def subscribe(self, key, callback):
-		self.ctx.bus.subscribe(key, callback)
+		self.bot.bus.subscribe(key, callback)
 
 	def ubsubscribe(self, key, callbask):
-		self.ctx.bus.ubsubscribe(key, callback)
+		self.bot.bus.ubsubscribe(key, callbask)
 
 	def publish(self, key, *args, **kwargs):
-		self.ctx.bus.publish(key, *args, **kwargs)
-
-
-class CommandPlugin(Plugin):
-	def __init__(self, ctx):
-		Plugin.__init__(self, ctx)
-
-		self.subscribe("irc.privmsg", self._on_privmsg)
-
-	def _on_privmsg(self, msg):
-		if msg.trail.startswith('!'):
-			self._invoke(msg)
-
-	def _invoke(self, msg):
-		# distinguish between commands with and without parameters
-		if ' ' in msg.trail:
-			cmd, params = msg.trail.split(' ', 1)
-		else:
-			cmd, params = msg.trail, None
-
-		# strip the ! away
-		cmd = cmd.lstrip('!')
-
-		meth = lookup_hook(self, cmd, prefix="on_cmd_")
-
-		if meth:
-			meth(params, msg)
+		self.bot.bus.publish(key, *args, **kwargs)

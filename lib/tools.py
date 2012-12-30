@@ -203,39 +203,3 @@ irc_codes = {
 	'258': 'rpl_adminloc2',
 	'259': 'rpl_adminemail',
 }
-
-def lookup_hook(context, name, prefix="on_"):
-	"""
-	Lookup chain:
-
-	1. return member method with prefix (i.e. on_join, on_351)
-	2. return method within lookup table (resolve method_name by numeric command)
-	3. return none
-
-	:param context: object to be instrospected
-	:param name: method name to find
-	:param lookup_table: lookup table as dict
-	:param prefix: search with prefix in the method name
-
-	:return: method reference
-	"""
-
-	method = None
-	method_name = prefix + str(name)
-
-	# hook name exists in context?
-	if method_name in dir(context):
-		return getattr(context, method_name)
-
-	# lookup_table provided? name is digit and can be looked up?
-	elif str(name).isdigit() and int(name) in irc_codes:
-		name = int(name)
-
-		# resolve code to hook name
-		method_name = prefix + irc_codes[name]
-
-		# hook name exists in context?
-		if method_name in dir(context):
-			return getattr(context, prefix + lookup_table[name])
-
-	return None

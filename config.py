@@ -12,18 +12,20 @@ PATHS = {
 }
 
 IDENTITY = {
-	'nick': 'jxaBot',
-	'realname': 'Cool Bot',
+	'nick': 'pealBot',
+	'username': "pbot",
+	'realname': 'Awesome Bot',
 	#'password': 'XXX',
 }
 
 HOST = ('irc.freenode.org', 6667)
+AUTOJOIN = ("#randomchan",)
 
-AUTOJOIN = ("#bsxlab",)
 
 PLUGINS = (
 	'basic.Basic',
-	'admin.Admin',
-	'testplugin.TestPlugin',
-	'quotes.Quotes',
+	#'admin.Admin',
+	'aspell.Aspell',
+	'reminder.Reminder',
+	#'quotes.Quotes',
 )

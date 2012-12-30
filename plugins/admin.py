@@ -19,18 +19,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from plugin import CommandPlugin
+from plugin import Plugin
 
-class Admin(CommandPlugin):	
-	def __init__(self, ctx):
-		CommandPlugin.__init__(self, ctx)
+class Admin(Plugin):
+	def __init__(self, bot):
+		Plugin.__init__(self, bot)
 
-	def on_cmd_kill(self, p, msg):
-		self.ctx.quit()
+	"""
+	def on_cmd_kill(self, msg, params):
+		self.bot.quit()
 
-	def on_cmd_join(self, p, msg):
-		self.ctx.join(p)
+	def on_cmd_part(self, msg, params):
+		chan = msg.params[0]
+		self.bot.part(chan)
 
-	def on_cmd_part(self, p, msg):
-		chan = msg.targets[0]
-		self.ctx.part(chan)
+	def on_cmd_join(self, msg, params):
+		self.bot.join(params)
+	"""
