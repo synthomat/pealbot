@@ -9,13 +9,11 @@ At the moment it supports:
 - kill itself
 - apply password-protected username
 
-API Documentation can be found at http://synthomat.de/pealbot/docs/
-
 Tests are continuously run using Travis-CI:
 [![Build Status](https://travis-ci.org/synthomat/pealbot.png)](https://travis-ci.org/synthomat/pealbot)
 
 ## License
-Copyright (c) 2012 Anton Zering <<synth@lostprofile.de>>
+Copyright (c) 2012 Synthomat
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
